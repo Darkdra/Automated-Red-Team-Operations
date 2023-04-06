@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Automatic Red Team Scenarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#instances" onclick="reveal('instances')">Instances</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#vpc" onclick="reveal('vpc')">VPC</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#subnet" onclick="reveal('subnet')">Subnet</a>
+          </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#vulnerabilities" onclick="reveal('vulnerabilities')">Vulnerabilities</a>
+          </li>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#scenarios" onclick="reveal('scenarios')">Scenarios</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main">
+
+      <div id="instances" style="padding-left: 10px">
+          <h3>ECS Instances</h3>
+          {% for ecs in instances %}
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed blue bold" type="button" data-bs-toggle="collapse" data-bs-target="#{{ ecs.name }}" aria-expanded="false" aria-controls="{{ ecs.name }}">
+                    {{ ecs.name }}
+                  </button>
+                </h2>
+                <div id="{{ ecs.name }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <p class="card-text">ami = {{ ecs.ami }}</p>
+                      <p class="card-text">subnet = <a href="#{{ ecs.subnet }}" onclick="reveal('subnet')">{{ ecs.subnet }}</a></p>
+                      <p class="card-text">Public = {{ ecs.isPublic }}</p>
+                  </div>
+                </div>
+              </div>
+          {% endfor %}
+      </div>
+
+        <div id="vpc" style="padding-left: 10px; display: none;">
+          <h3>VPC</h3>
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+                {% for vpc in vpcs %}
+              <div class="accordion-item">
+                <h2 class="accordion-header" >
+                  <button class="accordion-button collapsed blue bold" type="button" data-bs-toggle="collapse" data-bs-target="#{{ vpc.name }}" aria-expanded="false" aria-controls="{{ vpc.name }}">
+                    {{ vpc.name }}
+                  </button>
+                </h2>
+                <div id="{{ vpc.name }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">CIDR Block = {{ vpc.cidrBlock }}</div>
+                </div>
+              </div>
+                {% endfor %}
+            </div>
+      </div>
+
+        <div id="subnet" style="padding-left: 10px; display: none;">
+          <h3>Subnet</h3>
+            <div class="accordion accordion-flush" >
+                {% for subnet in subnets %}
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed blue bold" type="button" data-bs-toggle="collapse" data-bs-target="#{{ subnet.name }}" aria-expanded="false" aria-controls="{{ subnet.name }}">
+                    {{ subnet.name }}
+                  </button>
+                </h2>
+                <div id="{{ subnet.name }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                      <p class="card-text">VPC = {{ subnet.vpcId }} </p>
+                        <p class="card-text">CIDR Block = {{ subnet.cidrBlock }} </p>
+                  </div>
+                </div>
+              </div>
+                {% endfor %}
+            </div>
+      </div>
+
+        <div id="vulnerabilities" style="padding-left: 10px; display: none;">
+          <h3 style="text-decoration: underline;padding: 15px" class="text-center">Initial Access</h3>
+                {% for vuln in vulns %}
+                    {% if vuln['Category'] == "Initial Access" %}
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#{{ vuln['CVE'] }}" aria-expanded="false" aria-controls="{{ vuln['CVE'] }}">
+                              <div class="row">
+                                  <div class="col-md-8 blue" style="font-weight: bold">
+                                  {{ vuln['Name'] }}
+                                  </div>
+                                  <div class="col-md-4 {{ vuln['Severity'] }}" style="font-weight: bold">
+                                      Severity: {{ vuln['Severity'] }}
+                                  </div>
+                              </div>
+                          </button>
+                        </h2>
+                        <div id="{{ vuln['CVE'] }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body">
+                              <p class="card-text font-weight-bold"><text class="bold">CVE:</text> {{ vuln['CVE'] }}</p>
+                              <p class="card-text">{{ vuln['Description'] }}</p>
+                              <p class="card-text"><text class="bold">Affected Instance:</text> {{ vuln['Affected'] }}</p>
+                              <p class="card-text"><text class="bold">Cause:</text> {{ vuln['CauseName'] }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                {% endfor %}
+
+            <h3 style="text-decoration: underline;padding: 15px" class="text-center">Privilege Escalation</h3>
+            {% for vuln in vulns %}
+                    {% if vuln['Category'] == "Privilege Escalation" %}
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse" data-bs-target="#{{ vuln['CVE'] }}" aria-expanded="false" aria-controls="{{ vuln['CVE'] }}">
+                            <div class="row">
+                                  <div class="col-md-8 blue" style="font-weight: bold">
+                                  {{ vuln['Name'] }}
+                                  </div>
+                                  <div class="col-md-4 {{ vuln['Severity'] }}" style="font-weight: bold">
+                                      Severity: {{ vuln['Severity'] }}
+                                  </div>
+                              </div>
+                          </button>
+                        </h2>
+                        <div id="{{ vuln['CVE'] }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body">
+                              <p class="card-text font-weight-bold"><text class="bold">CVE:</text> {{ vuln['CVE'] }}</p>
+                              <p class="card-text">{{ vuln['Description'] }}</p>
+                              <p class="card-text"><text class="bold">Affected Instance:</text> {{ vuln['Affected'] }}</p>
+                              <p class="card-text"><text class="bold">Cause:</text> {{ vuln['CauseName'] }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                {% endfor %}
+            <h3 style="text-decoration: underline;padding: 15px" class="text-center">Data Exfiltration</h3>
+            {% for vuln in vulns %}
+                    {% if vuln['Category'] == "Data Exfiltration" %}
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ vuln['CVE'] }}" aria-expanded="false" aria-controls="{{ vuln['CVE'] }}">
+                              <div class="row">
+                                  <div class="col-md-8 blue" style="font-weight: bold">
+                                  {{ vuln['Name'] }}
+                                  </div>
+                                  <div class="col-md-4 {{ vuln['Severity'] }}" style="font-weight: bold">
+                                      Severity: {{ vuln['Severity'] }}
+                                  </div>
+                              </div>
+                          </button>
+                        </h2>
+                        <div id="{{ vuln['CVE'] }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body">
+                              <p class="card-text font-weight-bold"><text class="bold">CVE:</text> {{ vuln['CVE'] }}</p>
+                              <p class="card-text">{{ vuln['Description'] }}</p>
+                              <p class="card-text"><text class="bold">Affected Instance:</text> {{ vuln['Affected'] }}</p>
+                              <p class="card-text"><text class="bold">Cause:</text> {{ vuln['CauseName'] }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                {% endfor %}
+      </div>
+
+        <div id="scenarios" style="padding-left: 10px; display: none;">
+          <h3>Scenarios</h3>
+            {% for scenario in scenarios %}
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                      {{ scenario['scenario'][0] }}
+                    </div>
+                    <div class="col-sm">
+                        {% if scenario['scenario']|length > 1 %}
+                        <i class="fa-solid fa-arrow-right" style="margin-right:30px;"></i>
+                      {{ scenario['scenario'][1] }}
+                        {% endif %}
+                    </div>
+                    <div class="col-sm">
+                        {% if scenario['scenario']|length > 2 %}
+                        <i class="fa-solid fa-arrow-right" style="margin-right:30px;"></i>
+                      {{ scenario['scenario'][2] }}
+                        {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <hr class="hr" />
+            {% endfor %}
+
+      </div>
+
+    </main><!-- /.container -->
+    <script type="text/javascript">
+
+        function reveal(cat){
+            document.getElementById('instances').style.display = 'none';
+            document.getElementById('vpc').style.display = 'none';
+            document.getElementById('subnet').style.display = 'none';
+            document.getElementById('vulnerabilities').style.display = 'none';
+            document.getElementById('scenarios').style.display = 'none';
+            document.getElementById(cat).style.display = 'block';
+        }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

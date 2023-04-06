@@ -1,0 +1,53 @@
+body {
+    // background: #121212;
+    background: white;
+    height: 100%;
+    margin: 0;
+    padding-top: 5rem;
+}
+
+h3 {
+    //color: white;
+}
+
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.card-header {
+    color: red;
+}
+
+.car {
+    margin: 20px;
+}
+
+.card-body{
+    padding-left: 10px;
+    margin: 0px;
+}
+
+a{
+    color: black;
+}
+
+.blue{
+    color: #1E90FF
+}
+
+.high{
+    color: #B22222
+}
+
+.moderate{
+    color: #FFD700
+}
+
+.low{
+    color: #3CB371
+}
+
+.bold{
+    font-weight: bold
+}
