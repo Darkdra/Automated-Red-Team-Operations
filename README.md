@@ -1,4 +1,4 @@
-run with python -m flask --debug run
+run with python -m flask run
 
 run terraform fmt to format the files first
 
