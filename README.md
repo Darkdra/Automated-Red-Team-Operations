@@ -1,6 +1,4 @@
-run with python -m flask run
-
-run terraform fmt to format the files first
+Run with python -m flask run
 
 Requires installing aws cli and configuring the access and secret key.
 
