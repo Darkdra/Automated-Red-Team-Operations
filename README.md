@@ -12,7 +12,7 @@ sudo apt install awscli
 aws configure
 
 #download the project folder
-git clone 
+https://github.com/Darkdra/Automated-Red-Team-Operations.git 
 
 #install the requirements.txt
 pip install -r requirements.txt
