@@ -8,7 +8,7 @@ How to run in Linux:
 #Install aws cli
 sudo apt install awscli
 
-#configure the aws cli by adding aws secret and access key
+#configure the aws cli by adding aws keys
 aws configure
 
 #download the project folder
