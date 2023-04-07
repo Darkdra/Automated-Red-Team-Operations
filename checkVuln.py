@@ -11,7 +11,7 @@ def check_ami(current_ecs, ami_string):
     print(colored("         [-] Checking ami " + ami_string, "yellow"))
     #running the version string with aws cli #assume ap-southeast-1 as region
     cmd_str = "aws ec2 describe-images --region ap-southeast-1 --image-ids " + ami_string
-    proc = subprocess.Popen(cmd_str, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd_str, stdout=subprocess.PIPE, shell=True)
     output = json.load(proc.stdout)
     #reads the output to get the ami details
     ami_platform = output['Images'][0]["PlatformDetails"]
