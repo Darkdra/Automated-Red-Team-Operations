@@ -29,7 +29,7 @@ resource "aws_iam_instance_profile" "instance_profile_1" {
 }
 
 resource "aws_iam_role_policy_attachment" "iam_s3_policy_1" {
-  roles       = [aws_iam_instance_profile.instance_profile_1.name]
+  role       = aws_iam_instance_profile.instance_profile_1.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
