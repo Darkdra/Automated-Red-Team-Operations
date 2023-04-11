@@ -207,7 +207,7 @@ def parse_policy(directory_num, profile_name):
                 if 'resource \"aws_iam_role_policy_attachment\"' in line:
                     i += 1
                     while (i < len(lines) and 'resource \"' not in lines[i]):
-                        if 'roles' in lines[i]:
+                        if 'role' in lines[i]:
                             if profile_name in lines[i]:
                                 profile_name_present = True
                         elif 'policy_arn' in lines[i]:
