@@ -4,7 +4,7 @@ contains IAM role and s3 buckets
 
 # Create an IAM role for the Web Servers.
 resource "aws_iam_role" "iam_role_1" {
-  name               = "ima_role_1"
+  name               = "iam_role_1"
   path               = "/"
   assume_role_policy = <<EOF
 {
@@ -33,30 +33,22 @@ resource "aws_iam_role_policy_attachment" "iam_s3_policy_1" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
-resource "aws_s3_bucket" "app_bucket1" {
-  bucket = "app_bucket1"
+resource "aws_s3_bucket" "app-bucket1" {
+  bucket        = "app-bucket1"
+  force_destroy = true
 
-  tags = {
-    Name        = "app_bucket"
-    Environment = "Prod"
+  lifecycle {
+    prevent_destroy = false
   }
-}
-
-resource "aws_s3_bucket" "app_bucket2" {
-  bucket = "app_bucket2"
 
   tags = {
-    Name        = "app_bucket2"
+    Name        = "app-bucket"
     Environment = "Prod"
   }
 }
 
 resource "aws_s3_bucket_acl" "app_bucket1_acl" {
-  bucket = aws_s3_bucket.app_bucket1.id
+  bucket = aws_s3_bucket.app-bucket1.id
   acl    = "private"
 }
 
-resource "aws_s3_bucket_acl" "app_bucket2_acl" {
-  bucket = aws_s3_bucket.app_bucket2.id
-  acl    = "private"
-}
