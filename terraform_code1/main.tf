@@ -2,17 +2,25 @@
 # Configure the AWS Provider
 
 provider "aws" {
-  region     = "ap-southeast-1" #singapore
+  region = "ap-southeast-1" #singapore
+}
+
+module "dedicated-host" {
+  source            = "DanielRDias/dedicated-host/aws"
+  version           = "1.0.0"
+  instance_type     = "mac1.metal"
+  availability_zone = "ap-southeast-1a"
 }
 
 # app_server1
 resource "aws_instance" "app_server1" {
   ami               = "ami-01b0b1ff88d5e0ee5" #mac
-  instance_type     = "t2.micro"
+  instance_type     = "mac1.metal"
   availability_zone = "ap-southeast-1a"
 
-  user_data  = file("app_server1.sh")
+  user_data                   = file("app_server1.sh")
   subnet_id                   = aws_subnet.app_external_subnet.id
+  host_id                     = module.dedicated-host.dedicated_host_id
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -27,11 +35,12 @@ resource "aws_instance" "app_server1" {
 # app_server2
 resource "aws_instance" "app_server2" {
   ami               = "ami-01b0b1ff88d5e0ee5" #mac
-  instance_type     = "t2.micro"
+  instance_type     = "mac1.metal"
   availability_zone = "ap-southeast-1a"
 
-  user_data  = file("app_server2.sh")
+  user_data                   = file("app_server2.sh")
   subnet_id                   = aws_subnet.app_external_subnet.id
+  host_id                     = module.dedicated-host.dedicated_host_id
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -51,9 +60,9 @@ resource "aws_instance" "internal_server1" {
   availability_zone = "ap-southeast-1a"
 
   subnet_id  = aws_subnet.app_internal_subnet.id
-  private_ip = "10.1.10.1"
+  private_ip = "10.1.10.50"
 
-  user_data  = file("internal_server1.sh")
+  user_data = file("internal_server1.sh")
   vpc_security_group_ids = [
     aws_security_group.server_security.id
   ]
@@ -70,9 +79,9 @@ resource "aws_instance" "internal_server2" {
   availability_zone = "ap-southeast-1a"
 
   subnet_id  = aws_subnet.app_internal_subnet.id
-  private_ip = "10.1.10.2"
+  private_ip = "10.1.10.100"
 
-  user_data  = file("internal_server2.sh")
+  user_data = file("internal_server2.sh")
   vpc_security_group_ids = [
     aws_security_group.server_security.id
   ]
