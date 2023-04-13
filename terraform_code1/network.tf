@@ -39,6 +39,7 @@ resource "aws_subnet" "app_internal_subnet" {
   }
 }
 
+
 #creating an interface
 resource "aws_network_interface" "app_internal_interface" {
   subnet_id         = aws_subnet.app_internal_subnet.id
@@ -54,10 +55,6 @@ resource "aws_network_interface" "app_internal_interface" {
 # internal Route Table 
 resource "aws_route_table" "app_internal_route_table" {
   vpc_id = aws_vpc.app_vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-  }
 
   tags = {
     Name = "app internal route table"
